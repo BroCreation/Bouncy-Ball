@@ -20,6 +20,9 @@ Demo
 
 ![photo](https://github.com/user-attachments/assets/94e4dd50-c8e9-43cc-9974-18a3476dad12)
 
+Open Link
+https://bouncybouncy.netlify.app/
+
 Project Structure
 
 ```
@@ -37,6 +40,7 @@ To run the application locally:
 1. Clone the repository
 
 bash
+
 $ git clone https://github.com/brocreation/bouncy-ball.git
 $ cd bouncy-ball
 
@@ -53,8 +57,6 @@ Simply open `index.html` in any modern web browser. No build tools or dependenci
 
 Potential Enhancements
 ``` COMING SOON ``` 
- Collision detection between balls
- Gravity toggle and friction simulation
- Ball customization (size, behavior)
-
-
+Collision detection between balls
+Gravity toggle and friction simulation
+Ball customization (size, behavior)
