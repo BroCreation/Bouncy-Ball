@@ -1,0 +1,81 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #333;
+    overflow: hidden;
+    width: 100%;
+}
+
+.ball {
+    position: absolute;
+    --size: 3.5;
+    --x: 50;
+    --y: 50;
+    top: calc(var(--y) * 1%);
+    left: calc(var(--x) * 1%);
+    transform: translate(-50%, -50%);
+    background-color: rgb(211, 1, 28);
+    width: calc(var(--size) * 1vh);
+    height: calc(var(--size) * 1vh);
+    border-radius: 50%;
+    z-index: 100;
+}
+
+.heading {
+    color: white;
+    opacity: 0.3;
+    font-size: 18vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+
+.speedometer {
+    font-size: 8vh;
+    color: white;
+    opacity: 0.4;
+    padding: 2vh 2vw;
+}
+
+.speedometer sup {
+    font-size: 4vh;
+}
+.buttons {
+    position: absolute;
+    bottom: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5vw;
+}
+
+.btn {
+    background-color: whitesmoke;
+    opacity: 0.7;
+    border: none;
+    color: #333;
+    padding: 0 1.5vw;
+    height: 8vh;
+    cursor: pointer;
+    font-size: 4vh;
+    border-radius: 0.2vh;
+}
+
+.btn:hover {
+    opacity: 0.7;
+}
+
+.btn:active{
+    transform: scale(0.92);
+}
+
+.toggle {
+    display: none;
+}
