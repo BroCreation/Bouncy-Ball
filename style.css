@@ -45,7 +45,7 @@ body {
 }
 
 .speedometer sup {
-    font-size: 4vh;
+    font-size: 45%;
 }
 .buttons {
     position: absolute;
