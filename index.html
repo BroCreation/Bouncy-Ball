@@ -10,12 +10,16 @@
 </head>
 <body>
     <div class="heading">Bouncy Ball<span id="multiplBalls" class="toggle">s</span></div>
-    <div class="speedometer"><span id="speedometer"></span> ms<sup>-1</sup></div>
+    <div class="speedometer">
+        <span id="speedometer"></span>
+        <p class="tooltip">Average Speed</p>
+    </div>
     <div class="buttons">
         <button id="upBtn" class="btn">&uarr;</button>
         <button id="downBtn" class="btn">&darr;</button>
         <button id="resetBtn" class="btn">R</button>
         <button id="addBtn" class="btn">Add</button>
+        <button id="collisionBtn" class="btn">Collision</button>
     </div>
     <div class="ball" id="ball"></div>
     <div id="container"></div>
