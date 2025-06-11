@@ -1,4 +1,5 @@
 const INITIAL_VELOCITY = 0.025;
+const GRAVITY = 0.0002;
 
 class Ball {
     constructor(ballElem) {
@@ -45,6 +46,7 @@ class Ball {
             this.direction = {x: Math.cos(heading), y: Math.sin(heading)}
         }
         this.velocity = INITIAL_VELOCITY
+        this.movementSpeed = 1
     }
 
     isCollision(other) {
@@ -179,11 +181,30 @@ class Ball {
             }
         }
     }
+    
+    // TODO: ADD PARTICLES/TRAIL
+    gravity() {
+        // velocity = speed * direction
+        let vx = this.velocity * this.direction.x
+        let vy = this.velocity * this.direction.y
+        vy += GRAVITY
+        this.velocity = Math.sqrt(vx * vx + vy * vy);
+        this.direction.x = vx / this.velocity;
+        this.direction.y = vy / this.velocity;
+    }
 
     update(delta) {
         this.x += this.velocity * this.direction.x * delta
         this.y += this.velocity * this.direction.y * delta
         this.wallCollision()
+    }
+}
+
+class Particle {
+    constructor(size, color, direction) {
+        this.size = size
+        this.color = color
+        this.direction = direction
     }
 }
 
@@ -193,6 +214,13 @@ function convertPxToPercent(value, dimension) {
 
 function convertPercentToPx(value, dimension) {
     return (value * dimension) / 100
+}
+
+function moveBall(ball) {
+    if (keys["w"] || keys["W"] || keys["ArrowUp"]) ball.y -= ball.movementSpeed;
+    if (keys["s"] || keys["S"] || keys["ArrowDown"]) ball.y += ball.movementSpeed;
+    if (keys["a"] || keys["A"] || keys["ArrowLeft"]) ball.x -= ball.movementSpeed;
+    if (keys["d"] || keys["D"] || keys["ArrowRight"]) ball.x += ball.movementSpeed;
 }
 
 function createBall(id) {
@@ -213,6 +241,20 @@ function getRandomNumberBetween(min, max) {
     return Math.random() * (max - min) + min
 }
 
+function restart() {
+    ball.reset()
+    newBallsContainer.innerHTML = ""
+    measurementElem.textContent = "Average Speed"
+    balls = balls.slice(0, 1)
+    multipleBallsElem.classList.add('toggle')
+    toggleCollision = false
+    toggleGravity = false
+    isMove = false
+    isCollisionRunning = true
+    isGravityRunning = true
+    istoggleRunning = true
+}
+
 const ball = new Ball(document.getElementById("ball"))
 const speedometerElem = document.getElementById("speedometer")
 const upBtnElem = document.getElementById("upBtn")
@@ -221,10 +263,23 @@ const resetBtnElem = document.getElementById("resetBtn")
 const addBtnElem = document.getElementById("addBtn")
 const newBallsContainer = document.getElementById('container')
 const multipleBallsElem = document.getElementById('multiplBalls')
-const collisionBtn = document.getElementById("collisionBtn")
+const collisionBtnElem = document.getElementById("collisionBtn")
+const gravityBtnElem = document.getElementById("gravityBtn")
+const moveBtnElem = document.getElementById("moveBtn")
+const measurementElem = document.getElementById("measurement")
+const controlBtnElem = document.getElementById("controlBtn")
+const controlBtnElems = document.getElementById("controlButtons")
 let balls = [ball]
 let ballId = 0
+
 let toggleCollision = false
+let isCollisionRunning = true
+let toggleGravity = false
+let isGravityRunning = true
+let isMove = false
+let istoggleRunning = true
+
+const keys = {"ArrowUp": false, "ArrowDown": false, "ArrowLeft": false, "ArrowRight": false,}
 
 let lastTime
 function update(time) {
@@ -233,53 +288,104 @@ function update(time) {
         // Update Code
         let avgSpeed, sum = 0
         for(const ball of balls) {
-            ball.update(delta, balls)
+            if(!isMove) {
+                ball.update(delta, balls)
+            }
             if(toggleCollision) {
                 ball.ballCollision(balls)
+            }
+            if(toggleGravity) {
+                ball.gravity()
+            } 
+            if (isMove) {
+                moveBall(balls[0])
             }
             sum += ball.velocity
         }
         avgSpeed = sum / balls.length
-        speedometerElem.textContent = (avgSpeed * 200).toFixed(1)
+        if(isMove) speedometerElem.textContent = (ball.movementSpeed * 10).toFixed(1)
+        else speedometerElem.textContent = (avgSpeed * 200).toFixed(1)
     }
     lastTime = time
     window.requestAnimationFrame(update)
 }
 
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+})
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key] = false;
+})
+
 upBtnElem.addEventListener("mousedown", e => {
-    for(const ball of balls) {
-        ball.velocity += 0.025
+    if(!isMove) {
+        for(const ball of balls) {
+            ball.velocity += 0.025
+        }
     }
+    ball.movementSpeed += 0.25
 })
 
 downBtnElem.addEventListener("mousedown", e => {
-    for(const ball of balls) {
-        ball.velocity -= 0.025
+    if(!isMove) {
+        for(const ball of balls) {
+            ball.velocity -= 0.025
+        }
     }
+    ball.movementSpeed -= 0.25
 })
 
 resetBtnElem.addEventListener("mousedown", e => {
-    ball.reset()
-    newBallsContainer.innerHTML = ""
-    balls = balls.slice(0, 1)
-    multipleBallsElem.classList.add('toggle')
-    toggleCollision = false
+    restart()
+})
+
+moveBtnElem.addEventListener("mousedown", e => {
+    restart()
+    measurementElem.textContent = "Movement Speed"
+    if(istoggleRunning) {
+        isMove = true
+    } else {
+        isMove = false
+    }
+    istoggleRunning = !istoggleRunning
 })
 
 addBtnElem.addEventListener("mousedown", e => {
-    ballId += 1
-    balls.push(createBall(ballId))
-    multipleBallsElem.classList.remove('toggle')
+    if(!isMove) {
+        ballId += 1
+        balls.push(createBall(ballId))
+        multipleBallsElem.classList.remove('toggle')
+    }
 })
 
-let isRunning = true
-collisionBtn.addEventListener("mousedown", e => {
-    if(isRunning) {
+collisionBtnElem.addEventListener("mousedown", e => {
+    if(isCollisionRunning) {
         toggleCollision = true
     } else {
         toggleCollision = false
     }
-    isRunning = !isRunning
+    isCollisionRunning = !isCollisionRunning
+})
+
+gravityBtnElem.addEventListener("mousedown", e => {
+    if(isGravityRunning) {
+        toggleGravity = true
+    } else {
+        toggleGravity = false
+    }
+    isGravityRunning = !isGravityRunning
+})
+
+let controlToggle = true
+controlBtnElem.addEventListener("click", e => {
+    if(controlToggle) {
+        controlBtnElems.style.transition = "all 0.5s ease-in-out";
+        controlBtnElems.classList.remove("toggle")
+    } else {
+        controlBtnElems.classList.add("toggle")
+    }
+    controlToggle = !controlToggle
 })
 
 window.requestAnimationFrame(update)

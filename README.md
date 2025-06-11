@@ -57,6 +57,9 @@ Simply open `index.html` in any modern web browser. No build tools or dependenci
 
 Potential Enhancements
 ``` COMING SOON ``` 
-Collision detection between balls
-Gravity toggle and friction simulation
-Ball customization (size, behavior)
+Collision detection between balls (Done)
+Gravity toggle and friction simulation (Done)
+Ball customization (size, behavior) (Done)
+Ball Movement (Done)
+-> Ball Trail 
+-> Visual Details (direction)

@@ -10,16 +10,38 @@
 </head>
 <body>
     <div class="heading">Bouncy Ball<span id="multiplBalls" class="toggle">s</span></div>
-    <div class="speedometer">
-        <span id="speedometer"></span>
-        <p class="tooltip">Average Speed</p>
+    <div class="header">
+        <div class="speedometer">
+            <span id="speedometer"></span>
+            <p id="measurement" class="tooltip1">Average Speed</p>
+        </div>
+        <div class="show-btns">
+            <button id="controlBtn" class="btn">Controls</button>
+        </div>
     </div>
-    <div class="buttons">
-        <button id="upBtn" class="btn">&uarr;</button>
-        <button id="downBtn" class="btn">&darr;</button>
-        <button id="resetBtn" class="btn">R</button>
-        <button id="addBtn" class="btn">Add</button>
-        <button id="collisionBtn" class="btn">Collision</button>
+    
+    <div id="controlButtons" class="buttons toggle">
+        <button id="upBtn" class="btn">&uarr;
+            <p class="tooltip2">Increase</p>
+        </button>
+        <button id="downBtn" class="btn">&darr;
+            <p class="tooltip2">Decrease</p>
+        </button>
+        <button id="resetBtn" class="btn">R
+            <p class="tooltip2">Reset</p>
+        </button>
+        <button id="addBtn" class="btn">A
+            <p class="tooltip2">Add</p>
+        </button>
+        <button id="collisionBtn" class="btn">C
+            <p class="tooltip2">Collision</p>
+        </button>
+        <button id="gravityBtn" class="btn">G
+            <p class="tooltip2">Gravity</p>
+        </button>
+        <button id="moveBtn" class="btn">M
+            <p class="tooltip2">WASD to Move</p>
+        </button>
     </div>
     <div class="ball" id="ball"></div>
     <div id="container"></div>
