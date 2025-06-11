@@ -24,7 +24,14 @@ class Ball {
         this.ballElem.style.setProperty("--y", value)
     }
 
-    // TODO: Proper Elastic Collision with balls of different sizes/masses
+    get angle() {
+        return parseFloat(getComputedStyle(this.ballElem).getPropertyValue("--angle"))
+    }
+
+    set angle(value) {
+        this.ballElem.style.setProperty("--angle", value)
+    }
+
     get size() {
         return parseFloat(getComputedStyle(this.ballElem).getPropertyValue("--size"))
     }
@@ -42,8 +49,8 @@ class Ball {
         this.y = 50
         this.direction = {x: 0}
         while(Math.abs(this.direction.x) <= 0.2 || Math.abs(this.direction.x) >= 0.9) {
-            const heading = getRandomNumberBetween(0, 2 * Math.PI)
-            this.direction = {x: Math.cos(heading), y: Math.sin(heading)}
+            this.heading = getRandomNumberBetween(0, 2 * Math.PI)
+            this.direction = {x: Math.cos(this.heading), y: Math.sin(this.heading)}
         }
         this.velocity = INITIAL_VELOCITY
         this.movementSpeed = 1
@@ -196,6 +203,8 @@ class Ball {
     update(delta) {
         this.x += this.velocity * this.direction.x * delta
         this.y += this.velocity * this.direction.y * delta
+        const degrees = Math.atan2(this.direction.y, this.direction.x) * (180 / Math.PI)
+        this.angle = (degrees + 360) % 360 + 90 // 0 to 360 with 90 deg offset, add 360 to avoid -ve angle
         this.wallCollision()
     }
 }

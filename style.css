@@ -15,7 +15,7 @@ body {
     --size: 3.5;
     --x: 50;
     --y: 50;
-    --dir: 0;
+    --angle: 0;
     top: calc(var(--y) * 1%);
     left: calc(var(--x) * 1%);
     transform: translate(-50%, -50%);
@@ -26,16 +26,17 @@ body {
     z-index: 100;
 }
 
-/* .ball::before {
+.ball::before {
     content: '';
     width: 1.4px;
     height: calc(var(--size) * 2vh);
     background-color: gold;
     position: absolute;
+    display: inline-block;
     top: -50%;
     left: 50%;
-    transform: rotateZ(calc(var(--dir) * 1deg)); 
-} */
+    transform: rotateZ(calc(var(--angle) * 1deg)); 
+}
 
 .heading {
     color: white;
