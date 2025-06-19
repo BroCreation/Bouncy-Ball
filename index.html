@@ -12,13 +12,24 @@
 <body>
     <div class="heading">Bouncy Ball<span id="multiplBalls" class="toggle">s</span></div>
     <div class="header">
-        <div class="speedometer">
-            <span id="speedometer"></span>
-            <p id="measurement" class="tooltip1">Average Speed</p>
-        </div>
-        <div class="show-btns">
+        <section class="left">
+            <div class="meter">
+                <span id="speedometer"></span>
+                <p id="measurement" class="tooltip1">Average Speed</p>
+            </div>
+            <div id="fpsContainer" class="meter toggle">
+                <span id="fps"></span>
+                <p id="measurement" class="tooltip1">FPS</p>
+            </div>
+            <div id="ballAmount" class="meter toggle">
+                <span id="numOfBalls"></span>
+                <p id="measurement" class="tooltip1">Balls</p>
+            </div>
+        </section>
+        
+        <section class="right">
             <button id="controlBtn" class="btn">Controls</button>
-        </div>
+        </section>
     </div>
     
     <div id="controlButtons" class="buttons toggle">
@@ -47,6 +58,7 @@
             <p class="tooltip2">Dev Tools</p>
         </button>
     </div>
+    <button class="pause-btn toggle" id="pause"><img src="pause-icon.png" alt="pause"></button>
     <div class="ball" id="ball"></div>
     <div id="container"></div>
 </body>

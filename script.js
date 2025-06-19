@@ -1,5 +1,5 @@
 const INITIAL_VELOCITY = 0.025;
-const GRAVITY = 0.0002;
+let GRAVITY = 0.0002;
 
 import { Point, Rectangle, Quadtree } from './quadtree.js';
 
@@ -250,10 +250,6 @@ function convertPxToPercent(value, dimension) {
     return (value / dimension) * 100
 }
 
-function convertPercentToPx(value, dimension) {
-    return (value * dimension) / 100
-}
-
 function moveBall(ball) {
     if (keys["w"] || keys["W"] || keys["ArrowUp"]) ball.y -= ball.movementSpeed;
     if (keys["s"] || keys["S"] || keys["ArrowDown"]) ball.y += ball.movementSpeed;
@@ -282,6 +278,8 @@ function getRandomNumberBetween(min, max) {
 function restart() {
     ball.reset()
     balls = balls.slice(0, 1)
+    ballId = 0
+    numOfBallsElem.textContent = ballId + 1
     newBallsContainer.innerHTML = ""
     measurementElem.textContent = "Average Speed"
     multipleBallsElem.classList.add('toggle')
@@ -297,12 +295,16 @@ function restart() {
 
 const ball = new Ball(document.getElementById("ball"))
 const speedometerElem = document.getElementById("speedometer")
+const fpsElem = document.getElementById("fps")
 const upBtnElem = document.getElementById("upBtn")
 const downBtnElem = document.getElementById("downBtn")
 const resetBtnElem = document.getElementById("resetBtn")
 const addBtnElem = document.getElementById("addBtn")
 const newBallsContainer = document.getElementById('container')
+const numOfBallsElem = document.getElementById('numOfBalls')
+const ballAmountElem = document.getElementById('ballAmount')
 const multipleBallsElem = document.getElementById('multiplBalls')
+const fpsContainerElem = document.getElementById("fpsContainer")
 const collisionBtnElem = document.getElementById("collisionBtn")
 const gravityBtnElem = document.getElementById("gravityBtn")
 const moveBtnElem = document.getElementById("moveBtn")
@@ -310,16 +312,20 @@ const measurementElem = document.getElementById("measurement")
 const controlBtnElem = document.getElementById("controlBtn")
 const controlBtnElems = document.getElementById("controlButtons")
 const toolsBtnElem = document.getElementById("toolsBtn")
+const pauseBtnElem = document.getElementById("pause")
 
 let balls = [ball]
 let ballId = 0
+numOfBallsElem.textContent = ballId + 1
 
 let toggleCollision = false
 let isCollisionRunning = true
 let toggleGravity = false
 let isGravityRunning = true
 let isMove = false
+let paused = false
 let istoggleRunning = true
+let isPauseRunning = true
 let isControlRunning = true
 let isToolsRunning = true
 
@@ -337,8 +343,7 @@ function updateFPS(timestamp) {
         frames = 0;
         lastFpsUpdate = timestamp;
 
-        console.log("FPS:", fps);
-        console.log("BALLS", ballId + 1)
+        fpsElem.textContent = fps
     }
 }
 
@@ -349,7 +354,7 @@ function update(time) {
         // Update Code
         let avgSpeed, sum = 0
         for(const ball of balls) {
-            if(!isMove) {
+            if(!isMove && !paused) {
                 ball.update(delta, balls)
             }
             if(toggleCollision) {
@@ -397,6 +402,25 @@ downBtnElem.addEventListener("mousedown", e => {
     ball.movementSpeed -= 0.25
 })
 
+pauseBtnElem.addEventListener("mousedown", e => {
+    if(!isMove) {
+        if(isPauseRunning) {
+            paused = true
+            for(const ball of balls) {
+                ball.ballElem.classList.add("grey")
+            }
+            GRAVITY = 0
+        } else {
+            paused = false
+            for(const ball of balls) {
+                ball.ballElem.classList.remove("grey")
+            }
+            GRAVITY = 0.0002
+        }
+        isPauseRunning = !isPauseRunning
+    }
+})
+
 resetBtnElem.addEventListener("mousedown", e => {
     restart()
 })
@@ -416,6 +440,7 @@ addBtnElem.addEventListener("mousedown", e => {
     if(!isMove) {
         ballId += 1
         balls.push(createBall(ballId))
+        numOfBallsElem.textContent = ballId + 1
         multipleBallsElem.classList.remove('toggle')
     }
 })
@@ -430,20 +455,25 @@ collisionBtnElem.addEventListener("mousedown", e => {
 })
 
 gravityBtnElem.addEventListener("mousedown", e => {
-    if(isGravityRunning) {
-        toggleGravity = true
-    } else {
-        toggleGravity = false
+    if(!paused) {
+        if(isGravityRunning) {
+            toggleGravity = true
+        } else {
+            toggleGravity = false
+        }
+        isGravityRunning = !isGravityRunning
     }
-    isGravityRunning = !isGravityRunning
 })
 
 controlBtnElem.addEventListener("click", e => {
     if(isControlRunning) {
         controlBtnElems.style.transition = "all 0.25s ease-in-out";
         controlBtnElems.classList.remove("toggle")
+        pauseBtnElem.style.transition = "left .5s ease-out";
+        pauseBtnElem.classList.remove("toggle")
     } else {
         controlBtnElems.classList.add("toggle")
+        pauseBtnElem.classList.add("toggle")
     }
     isControlRunning = !isControlRunning
 })
@@ -454,10 +484,14 @@ toolsBtnElem.addEventListener("mousedown", e => {
             for (const ball of balls) {
                 ball.ballElem.style.setProperty("--display", "inline-block")
             }
+            ballAmountElem.classList.remove("toggle")
+            fpsContainerElem.classList.remove("toggle")
         } else {
             for (const ball of balls) {
                 ball.ballElem.style.setProperty("--display", "none")
             }
+            ballAmountElem.classList.add("toggle")
+            fpsContainerElem.classList.add("toggle")
         }
         isToolsRunning = !isToolsRunning
     }

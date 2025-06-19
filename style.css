@@ -62,14 +62,22 @@ body {
     justify-content: space-between;
 }
 
-.speedometer {
+.header .left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.meter {
     font-size: 8vh;
     color: white;
     opacity: 0.4;
     display: inline-block;
+    cursor: pointer;
 }
 
-.speedometer:hover .tooltip1 {
+.meter:hover .tooltip1 {
     display: block;
 }
 
@@ -103,7 +111,8 @@ body {
     transform: translateX(-50%);
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25vw;
+    justify-content: center;
+    gap: 5px;
 }
 
 .btn {
@@ -117,11 +126,23 @@ body {
     border-radius: 0.2vh;
 }
 
-.btn:hover {
+.pause-btn {
+    border-radius: 50%;
+    border: 2px solid whitesmoke;
+    width: 6.5vh;
+    height: 6.5vh;
+    cursor: pointer;
+    position: absolute;
+    bottom: 18px;
+    left: 95%;
+    opacity: 0.9;
+}
+
+.btn:hover, .pause-btn:hover {
     opacity: 0.7;
 }
 
-.btn:active{
+.btn:active, .pause-btn:active{
     transform: scale(0.92);
 }
 
@@ -129,20 +150,27 @@ body {
     display: none;
 }
 
+.pause-btn img {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .toggle {
     position: absolute;
-    left: -30%;
+    left: -50%;
+}
+
+.grey {
+  filter: grayscale(100%);
 }
 
 @media screen and (max-width: 768px){
     .heading {
         font-size: 12vw;
     }
-    .speedometer {
+    .meter {
         font-size: 6vw;
-    }
-    .btn {
-        height: 6vw;
-        font-size: 3vw;
     }
 }
