@@ -440,7 +440,7 @@ gravityBtnElem.addEventListener("mousedown", e => {
 
 controlBtnElem.addEventListener("click", e => {
     if(isControlRunning) {
-        controlBtnElems.style.transition = "all 0.5s ease-in-out";
+        controlBtnElems.style.transition = "all 0.25s ease-in-out";
         controlBtnElems.classList.remove("toggle")
     } else {
         controlBtnElems.classList.add("toggle")

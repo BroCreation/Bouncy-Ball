@@ -131,7 +131,7 @@ body {
 
 .toggle {
     position: absolute;
-    left: -120%;
+    left: -30%;
 }
 
 @media screen and (max-width: 768px){
