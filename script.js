@@ -1,6 +1,8 @@
 const INITIAL_VELOCITY = 0.025;
 const GRAVITY = 0.0002;
 
+import { Point, Rectangle, Quadtree } from './quadtree.js';
+
 class Ball {
     constructor(ballElem) {
         this.ballElem = ballElem
@@ -175,18 +177,45 @@ class Ball {
     }
 
     ballCollision(balls) {
-        // Collision detection for balls
-        if(balls.length > 1) {
-            for(let i = 0; i < balls.length; i++) {
-                let ballA = balls[i]
-                for(let j = i+1; j < balls.length; j++) {
-                    if(ballA.isCollision(balls[j])) {
-                        ballA.resolveOverlap(balls[j]);
-                        ballA.elasticCollisionHandle(balls[j])
-                    }
+        const boundary = new Rectangle(window.innerWidth / 2, window.innerHeight / 2, window.innerWidth, window.innerHeight);
+        const qtree = new Quadtree(boundary, 4);
+
+        // Insert all balls into the quadtree
+        for (const ball of balls) {
+            const r = ball.rect();
+            const centerX = r.left + r.width / 2;
+            const centerY = r.top + r.height / 2;
+            const point = new Point(centerX, centerY, ball);
+            qtree.insert(point);
+        }
+
+        // Collision detection of balls with nearby balls
+        for (const ball of balls) {
+            const r = ball.rect();
+            const centerX = r.left + r.width / 2;
+            const centerY = r.top + r.height / 2;
+            const range = new Rectangle(centerX, centerY, r.width * 2, r.height * 2);
+            const others = qtree.query(range);
+
+            for (const point of others) {
+                const other = point.userData;
+                if (ball === other) continue;
+                if (ball.isCollision(other)) {
+                    ball.resolveOverlap(other);
+                    ball.elasticCollisionHandle(other);
                 }
             }
         }
+
+        // Collision detection of balls with every other ball
+        // for(let i = 0; i < balls.length; ++i) {
+        //     for (let j = i+1; j < balls.length; ++j) {
+        //         if (balls[i].isCollision(balls[j])) {
+        //             balls[i].resolveOverlap(balls[j])
+        //             balls[i].elasticCollisionHandle(balls[j])
+        //         }
+        //     }
+        // }
     }
     
     // TODO: ADD PARTICLES/TRAIL
@@ -252,16 +281,18 @@ function getRandomNumberBetween(min, max) {
 
 function restart() {
     ball.reset()
+    balls = balls.slice(0, 1)
     newBallsContainer.innerHTML = ""
     measurementElem.textContent = "Average Speed"
-    balls = balls.slice(0, 1)
     multipleBallsElem.classList.add('toggle')
+    ball.ballElem.style.setProperty("--display", "none")
     toggleCollision = false
     toggleGravity = false
     isMove = false
     isCollisionRunning = true
     isGravityRunning = true
     istoggleRunning = true
+    isToolsRunning = true
 }
 
 const ball = new Ball(document.getElementById("ball"))
@@ -278,6 +309,8 @@ const moveBtnElem = document.getElementById("moveBtn")
 const measurementElem = document.getElementById("measurement")
 const controlBtnElem = document.getElementById("controlBtn")
 const controlBtnElems = document.getElementById("controlButtons")
+const toolsBtnElem = document.getElementById("toolsBtn")
+
 let balls = [ball]
 let ballId = 0
 
@@ -287,11 +320,30 @@ let toggleGravity = false
 let isGravityRunning = true
 let isMove = false
 let istoggleRunning = true
+let isControlRunning = true
+let isToolsRunning = true
 
 const keys = {"ArrowUp": false, "ArrowDown": false, "ArrowLeft": false, "ArrowRight": false,}
 
 let lastTime
+let lastFpsUpdate = 0
+let fps = 0
+let frames = 0
+
+function updateFPS(timestamp) {
+    frames++;
+    if (timestamp - lastFpsUpdate >= 1000) {
+        fps = frames;
+        frames = 0;
+        lastFpsUpdate = timestamp;
+
+        console.log("FPS:", fps);
+        console.log("BALLS", ballId + 1)
+    }
+}
+
 function update(time) {
+    updateFPS(time)
     if(lastTime != null) {
         let delta = time - lastTime
         // Update Code
@@ -386,15 +438,29 @@ gravityBtnElem.addEventListener("mousedown", e => {
     isGravityRunning = !isGravityRunning
 })
 
-let controlToggle = true
 controlBtnElem.addEventListener("click", e => {
-    if(controlToggle) {
+    if(isControlRunning) {
         controlBtnElems.style.transition = "all 0.5s ease-in-out";
         controlBtnElems.classList.remove("toggle")
     } else {
         controlBtnElems.classList.add("toggle")
     }
-    controlToggle = !controlToggle
+    isControlRunning = !isControlRunning
+})
+
+toolsBtnElem.addEventListener("mousedown", e => {
+    if(!isMove) {
+        if(isToolsRunning) {
+            for (const ball of balls) {
+                ball.ballElem.style.setProperty("--display", "inline-block")
+            }
+        } else {
+            for (const ball of balls) {
+                ball.ballElem.style.setProperty("--display", "none")
+            }
+        }
+        isToolsRunning = !isToolsRunning
+    }
 })
 
 window.requestAnimationFrame(update)
