@@ -314,6 +314,9 @@ const controlBtnElems = document.getElementById("controlButtons")
 const toolsBtnElem = document.getElementById("toolsBtn")
 const pauseBtnElem = document.getElementById("pause")
 
+const sound1 = new Audio("interface-sound.wav")
+const sound2 = new Audio("modern-click-sound.wav")
+
 let balls = [ball]
 let ballId = 0
 numOfBallsElem.textContent = ballId + 1
@@ -385,6 +388,8 @@ window.addEventListener("keyup", (e) => {
 })
 
 upBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     if(!isMove) {
         for(const ball of balls) {
             ball.velocity += 0.025
@@ -394,6 +399,8 @@ upBtnElem.addEventListener("mousedown", e => {
 })
 
 downBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     if(!isMove) {
         for(const ball of balls) {
             ball.velocity -= 0.025
@@ -403,6 +410,7 @@ downBtnElem.addEventListener("mousedown", e => {
 })
 
 pauseBtnElem.addEventListener("mousedown", e => {
+    sound1.play()
     if(!isMove) {
         if(isPauseRunning) {
             paused = true
@@ -422,10 +430,14 @@ pauseBtnElem.addEventListener("mousedown", e => {
 })
 
 resetBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     restart()
 })
 
 moveBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     restart()
     measurementElem.textContent = "Movement Speed"
     if(istoggleRunning) {
@@ -437,6 +449,8 @@ moveBtnElem.addEventListener("mousedown", e => {
 })
 
 addBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     if(!isMove) {
         ballId += 1
         balls.push(createBall(ballId))
@@ -446,6 +460,8 @@ addBtnElem.addEventListener("mousedown", e => {
 })
 
 collisionBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     if(isCollisionRunning) {
         toggleCollision = true
     } else {
@@ -455,6 +471,8 @@ collisionBtnElem.addEventListener("mousedown", e => {
 })
 
 gravityBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     if(!paused) {
         if(isGravityRunning) {
             toggleGravity = true
@@ -466,6 +484,7 @@ gravityBtnElem.addEventListener("mousedown", e => {
 })
 
 controlBtnElem.addEventListener("click", e => {
+    sound1.play()
     if(isControlRunning) {
         controlBtnElems.style.transition = "all 0.25s ease-in-out";
         controlBtnElems.classList.remove("toggle")
@@ -479,6 +498,8 @@ controlBtnElem.addEventListener("click", e => {
 })
 
 toolsBtnElem.addEventListener("mousedown", e => {
+    sound2.play()
+    sound2.playbackRate = 2.0
     if(!isMove) {
         if(isToolsRunning) {
             for (const ball of balls) {
