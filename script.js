@@ -238,14 +238,6 @@ class Ball {
     }
 }
 
-class Particle {
-    constructor(size, color, direction) {
-        this.size = size
-        this.color = color
-        this.direction = direction
-    }
-}
-
 function convertPxToPercent(value, dimension) {
     return (value / dimension) * 100
 }
@@ -296,22 +288,14 @@ function restart() {
 const ball = new Ball(document.getElementById("ball"))
 const speedometerElem = document.getElementById("speedometer")
 const fpsElem = document.getElementById("fps")
-const upBtnElem = document.getElementById("upBtn")
-const downBtnElem = document.getElementById("downBtn")
-const resetBtnElem = document.getElementById("resetBtn")
-const addBtnElem = document.getElementById("addBtn")
 const newBallsContainer = document.getElementById('container')
 const numOfBallsElem = document.getElementById('numOfBalls')
 const ballAmountElem = document.getElementById('ballAmount')
 const multipleBallsElem = document.getElementById('multiplBalls')
 const fpsContainerElem = document.getElementById("fpsContainer")
-const collisionBtnElem = document.getElementById("collisionBtn")
-const gravityBtnElem = document.getElementById("gravityBtn")
-const moveBtnElem = document.getElementById("moveBtn")
 const measurementElem = document.getElementById("measurement")
-const controlBtnElem = document.getElementById("controlBtn")
+const settingsBtnElem = document.getElementById("settingsBtn")
 const controlBtnElems = document.getElementById("controlButtons")
-const toolsBtnElem = document.getElementById("toolsBtn")
 const pauseBtnElem = document.getElementById("pause")
 
 const sound1 = new Audio("interface-sound.wav")
@@ -387,30 +371,100 @@ window.addEventListener("keyup", (e) => {
     keys[e.key] = false;
 })
 
-upBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    if(!isMove) {
-        for(const ball of balls) {
-            ball.velocity += 0.025
-        }
+// All Control Buttons Event Listener
+controlBtnElems.addEventListener('click', e => {
+    const target = e.target;
+    const cloneSound2 = sound2.cloneNode()
+
+    switch(target.id) {
+        case 'upBtn':
+            cloneSound2.play()
+            if(!isMove) {
+                for(const ball of balls) {
+                    ball.velocity += 0.025
+                }
+            }
+            ball.movementSpeed += 0.25
+            break;
+        case 'downBtn':
+            cloneSound2.play()
+            if(!isMove) {
+                for(const ball of balls) {
+                    ball.velocity -= 0.025
+                }
+            }
+            ball.movementSpeed -= 0.25
+            break;
+        case 'resetBtn':
+            cloneSound2.play()
+            restart()
+            break;
+        case 'addBtn':
+            cloneSound2.play()
+            if(!isMove) {
+                ballId += 1
+                balls.push(createBall(ballId))
+                numOfBallsElem.textContent = ballId + 1
+                multipleBallsElem.classList.remove('toggle')
+            }
+            break;
+        case 'collisionBtn':
+            cloneSound2.play()
+            if(isCollisionRunning) {
+                toggleCollision = true
+            } else {
+                toggleCollision = false
+            }
+            isCollisionRunning = !isCollisionRunning
+            break;
+        case 'gravityBtn':
+            cloneSound2.play()
+            if(!paused) {
+                if(isGravityRunning) {
+                    toggleGravity = true
+                } else {
+                    toggleGravity = false
+                }
+                isGravityRunning = !isGravityRunning
+            }
+            break;
+        case 'moveBtn':
+            cloneSound2.play()
+            restart()
+            measurementElem.textContent = "Movement Speed"
+            if(istoggleRunning) {
+                isMove = true
+            } else {
+                isMove = false
+            }
+            istoggleRunning = !istoggleRunning
+            break;
+        case 'toolsBtn':
+            cloneSound2.play()
+            if(!isMove) {
+                if(isToolsRunning) {
+                    for (const ball of balls) {
+                        ball.ballElem.style.setProperty("--display", "inline-block")
+                    }
+                    ballAmountElem.classList.remove("toggle")
+                    fpsContainerElem.classList.remove("toggle")
+                } else {
+                    for (const ball of balls) {
+                        ball.ballElem.style.setProperty("--display", "none")
+                    }
+                    ballAmountElem.classList.add("toggle")
+                    fpsContainerElem.classList.add("toggle")
+                }
+                isToolsRunning = !isToolsRunning
+            }
+            break;
     }
-    ball.movementSpeed += 0.25
 })
 
-downBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    if(!isMove) {
-        for(const ball of balls) {
-            ball.velocity -= 0.025
-        }
-    }
-    ball.movementSpeed -= 0.25
-})
-
-pauseBtnElem.addEventListener("mousedown", e => {
-    sound1.play()
+// Pause Button
+pauseBtnElem.addEventListener("click", e => {
+    const cloneSound1 = sound1.cloneNode()
+    cloneSound1.play()
     if(!isMove) {
         if(isPauseRunning) {
             paused = true
@@ -429,62 +483,10 @@ pauseBtnElem.addEventListener("mousedown", e => {
     }
 })
 
-resetBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    restart()
-})
-
-moveBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    restart()
-    measurementElem.textContent = "Movement Speed"
-    if(istoggleRunning) {
-        isMove = true
-    } else {
-        isMove = false
-    }
-    istoggleRunning = !istoggleRunning
-})
-
-addBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    if(!isMove) {
-        ballId += 1
-        balls.push(createBall(ballId))
-        numOfBallsElem.textContent = ballId + 1
-        multipleBallsElem.classList.remove('toggle')
-    }
-})
-
-collisionBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    if(isCollisionRunning) {
-        toggleCollision = true
-    } else {
-        toggleCollision = false
-    }
-    isCollisionRunning = !isCollisionRunning
-})
-
-gravityBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    if(!paused) {
-        if(isGravityRunning) {
-            toggleGravity = true
-        } else {
-            toggleGravity = false
-        }
-        isGravityRunning = !isGravityRunning
-    }
-})
-
-controlBtnElem.addEventListener("click", e => {
-    sound1.play()
+// Settings Toggle Button
+settingsBtnElem.addEventListener("click", e => {
+    const cloneSound1 = sound1.cloneNode()
+    cloneSound1.play()
     if(isControlRunning) {
         controlBtnElems.style.transition = "all 0.25s ease-in-out";
         controlBtnElems.classList.remove("toggle")
@@ -495,27 +497,6 @@ controlBtnElem.addEventListener("click", e => {
         pauseBtnElem.classList.add("toggle")
     }
     isControlRunning = !isControlRunning
-})
-
-toolsBtnElem.addEventListener("mousedown", e => {
-    sound2.play()
-    sound2.playbackRate = 2.0
-    if(!isMove) {
-        if(isToolsRunning) {
-            for (const ball of balls) {
-                ball.ballElem.style.setProperty("--display", "inline-block")
-            }
-            ballAmountElem.classList.remove("toggle")
-            fpsContainerElem.classList.remove("toggle")
-        } else {
-            for (const ball of balls) {
-                ball.ballElem.style.setProperty("--display", "none")
-            }
-            ballAmountElem.classList.add("toggle")
-            fpsContainerElem.classList.add("toggle")
-        }
-        isToolsRunning = !isToolsRunning
-    }
 })
 
 window.requestAnimationFrame(update)
